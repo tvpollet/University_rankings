@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Are university rankings robust? An exploration with a Robust Ranking Method</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Thomas Pollet, Merim Bilalić and Lee Shepherd   Northumbria University    (thomas.pollet@northumbria.ac.uk)" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/remark-css/default-fonts.css" rel="stylesheet" />
+    <link href="libs/tile-view/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view/tile-view.js"></script>
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# Are university rankings robust? An exploration with a Robust Ranking Method
+]
+.author[
+### Thomas Pollet, Merim Bilalić and Lee Shepherd <br> Northumbria University <br><br> (<a href="mailto:thomas.pollet@northumbria.ac.uk" class="email">thomas.pollet@northumbria.ac.uk</a>)
+]
+.date[
+### 2024-02-26 | <a href="http://tvpollet.github.io/disclaimer">disclaimer</a>
+]
+
+---
+
+
+
+
+
+
+<div>
+<style type="text/css">.xaringan-extra-logo {
+width: 110px;
+height: 128px;
+z-index: 0;
+background-image: url(NU2.png);
+background-size: contain;
+background-repeat: no-repeat;
+position: absolute;
+top:1em;right:1em;
+}
+</style>
+<script>(function () {
+  let tries = 0
+  function addLogo () {
+    if (typeof slideshow === 'undefined') {
+      tries += 1
+      if (tries < 10) {
+        setTimeout(addLogo, 100)
+      }
+    } else {
+      document.querySelectorAll('.remark-slide-content:not(.title-slide):not(.inverse):not(.hide_logo)')
+        .forEach(function (slide) {
+          const logo = document.createElement('div')
+          logo.classList = 'xaringan-extra-logo'
+          logo.href = null
+          slide.appendChild(logo)
+        })
+    }
+  }
+  document.addEventListener('DOMContentLoaded', addLogo)
+})()</script>
+</div>
+
+
+
+&lt;style type="text/css"&gt;
+table {
+  font-size: 16px;     
+}
+&lt;/style&gt;
+
+&lt;style type="text/css"&gt;
+.table_small table {
+  font-size: 5.9px;     
+}
+&lt;/style&gt;
+
+&lt;style type="text/css"&gt;
+.table_red table {
+  font-size: 10px;     
+}
+&lt;/style&gt;
+
+## Today
+
+* Work in progress.
+
+* Largely a descriptive project.
+
+&lt;img src="https://media.giphy.com/media/n6ljtq0aO6Zqg/giphy.gif" width="400px" style="display: block; margin: auto;" /&gt;
+
+---
+## Methodology
+
+* I really like 'quirky' quantitative methods.
+
+--
+
+* Interested in metrics.
+
+&lt;img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaXU0NmJqaHlrem5lYW1lZmpmOXp6amJwa2x1b211eW8za2dvZXR3dCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/7rfwKxzvH22cg/giphy.gif" width="400px" style="display: block; margin: auto;" /&gt;
+
+---
+## Ubiquitous rankings
+
+* Top Lists (Songs, Drafts in sports, Movies, Places to visit)
+
+--
+
+* University of the Year... . (Times Higher Education, QS, Shanghai)
+
+&lt;img src="https://media.giphy.com/media/l2JecohhBypyIabXq/giphy.gif" width="400px" style="display: block; margin: auto;" /&gt;
+
+---
+## Found a hammer...
+
+* [Robust Ranking Aggregation (RRA) Method](https://doi.org/10.1177/2515245923121861). 
+
+--&gt; Use case: Meta-analysis of gene lists.
+
+
+&lt;img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZGxnczQyNXNlMTJucnYxODk3eXUxN3JiN3plamV1Yjl0b3NsamtjNCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/10dHotK4K8R0AM/giphy.gif" width="450px" style="display: block; margin: auto;" /&gt;
+
+???
+
+---
+## But there is an actual problem...
+
+* Cherry picking of university rankings.
+
+--
+
+&lt;img src="wakeford.png" width="400px" style="display: block; margin: auto;" /&gt;
+
+&lt;img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeGFic3lrcXRuZGhnM3ZmZ2ZzMGM4NW92dGtpb29sZnFnNmh4c2MwMyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/1SEPFI5uBwkwGI2Ylf/giphy-downsized-large.gif" width="200px" style="display: block; margin: auto;" /&gt;
+
+
+
+---
+## More about RRA
+
+* How does it work?
+
+--
+
+* Very simply put --&gt; Permutations.
+
+--
+
+* Null model: permuted lists.
+
+&lt;img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaGFlOWJkaGpsbmU2YnFqaTJhY3NhbmEzbHZjMmpxaTdoOXFkYXZraiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xT5LMEp9HwpWAeG2AM/giphy.gif" width="350px" style="display: block; margin: auto;" /&gt;
+
+--
+
+* Apply some form of error correction.
+
+---
+## Data sources
+
+* Guardian University Guide (2019, 2023, 2024)
+
+--
+
+* Complete University Guide (2019, 2023, 2024)
+
+--
+
+Methodology differs. Sometimes between years also.
+
+&lt;img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExYXIwbXk4aHhmY21xZDQ0NHdmc3lzaWtkdWRqNWJkc2pndHY4amQ0YyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l1KVaj5UcbHwrBMqI/giphy.gif" width="400px" style="display: block; margin: auto;" /&gt;
+
+---
+## Analyses
+
+* Descriptives / Spearman `\(\rho\)` / Wilcoxon signed rank test
+
+--
+
+* RRA Method
+
+--
+
+* Some illustrations with Russell Group
+
+&lt;img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExMjhtMWd0Mm0zczQxaHprZDVzbTRpNmMxYmt3MGJsOXdidzcxNDJmdCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o6gDQy926P0VM03ra/giphy.gif" width="350px" style="display: block; margin: auto;" /&gt;
+
+???
+Heuristics as with Krippendorff's alpha
+
+---
+## Analyses: error control
+
+* Error control as every item gets ranked via [Benjamini &amp; Yekutieli method](https://doi.org/10.1214/aos/1013699998). This method is conservative, as compared to other methods (e.g., Benjamini &amp; Hochberg, 1995).
+
+--
+
+* Makes no assumptions regarding the dependency of _p_ values. 
+
+--
+
+* An alternative is the Bonferroni method.
+
+&lt;img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHpnbTd5MnE4d25sb2lpeGsxZ3E5djl3ejBubHZoYTVwYmthbDc3byZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/wq993EmfwFt4MMYtU1/giphy.gif" width="400px" style="display: block; margin: auto;" /&gt;
+
+
+---
+## Some descriptives: Guardian 2024.
+
+* For 2024, Business and Management (code S240) has the most institutions ranked (_n_ = 119). 
+
+--
+
+* In contrast, Veterinary Science (code S030) had the fewest institutions ranked with just ten institutions being ranked. 
+
+--
+
+* In total, across all 66 subjects, 3,738 ranks were produced in 2024. 
+
+--
+
+* The Guardian institution list allows for ties in rankings (for 2024: 15 ties, none in top 20) as does the subject ranking list, but these are relatively rare at subject level (for 2024: _Median_ = 2.5 ties across 66 subjects).
+
+&lt;img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZHp4MzYwYWMxa2xicWp5emttcmo4YTdqN3kyNGpveHcyaDJya2NucCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Qy7tP5FZZXAN0SR5uc/giphy.gif" width="250px" style="display: block; margin: auto;" /&gt;
+
+
+---
+## Results: Guardian 2024
+
+&lt;img src="Table_guardian_RRA_2024.png" width="550px" style="display: block; margin: auto;" /&gt;
+
+---
+## Results Guardian 2024
+
+* Approximately half of the Russell Group universities were not included in the list.
+
+--
+
+* List also included some non-Russell Group members (e.g., St Andrews, Swansea).
+
+--
+
+* The correspondence between the two ranking lists was acceptable, both when including any institution ranked in the subject list (Spearman `\(\rho\)` = .667) and when restricting to universities which are listed in the GUG institution list (Spearman `\(\rho\)` = .673). 
+
+--
+
+* The absolute median rank shift between the two methods is 18 ranks (_n_ = 122 institutions ranked). 
+
+--
+
+* Some institutions did not move (min = 0), but at its extreme they can move with over 100 ranks (max = 103).
+
+---
+## Results: Guardian 2024 discrepancies
+
+&lt;img src="Table_guardian_ranking_discrepancies.png" width="550px" style="display: block; margin: auto;" /&gt;
+
+---
+## Results: Guardian 2024 vs. RRA Russell Group
+
+&lt;img src="Figure_1_guardian_RRA.png" width="550px" style="display: block; margin: auto;" /&gt;
+
+???
+The correspondence between the 24 Russell Group universities’ rankings between the two methods is relatively poor (Spearman `\(\rho\)` = .574).
+
+---
+## Results: Guardian 2023-2024 change descriptives.
+
+* The correspondence between an institution's rank for 2023 and 2024 was strong (Spearman `\(\rho\)` = .929). 
+
+--
+
+* Ten universities did not move ranks between 2023 and 2024 (8.26%). 
+
+--
+
+* The median movement on the institution list was five ranks -- significantly different from 0 (Wilcoxon signed rank test = 6216, _p_ &lt; .00001). 
+
+--
+
+* The biggest climbers were Portsmouth and SOAS with each climbing 34 ranks, respectively from 67 to 33 and from 86 to 52. 
+
+--
+
+* Largest drop, 42 places: Keele University moving from rank 32 in 2023 to rank 74 in 2024.
+
+???
+One not ranked.
+
+---
+## Results: Guardian 2023-2024 change descriptives II
+
+* For 3,556 items ranked we were able to calculate a rank difference between 2023 and 2024. 
+
+--
+
+* There was strong correspondence between 2023 and 2024 ranks (Spearman `\(\rho\)` = .863). 
+
+--
+
+* Median movement across all items in ranks was six ranks (min = 0, max = 66). 
+
+--
+
+* All subjects showed significant changes in ranks between 2023 and 2024 (all Wilcoxon signed rank tests of median movement against 0, _p_ &lt; .05). 
+
+--
+
+* 245 out of 3,556 items did not move rank (6.89%). 
+
+--
+
+* largest individual climber was the University of East London in Business and Management studies (S240) from rank 100 to 34.
+
+--
+
+* largest individual drop was by Keele university in Computer Science &amp; Information Systems (S220) from rank 20 in 2023 to rank 85 in 2024. 
+
+---
+## Results: Guardian 2023-2024 change descriptives III
+
+* Veterinary Sciences (S030) had the lowest median movement (Median = .5 rank) and Animation and Game design (S225) had the greatest median movement (Median = 11 ranks). 
+
+--
+
+* The greatest correspondence between 2023 and 2024 ranks was found in Medicine (S010, Spearman `\(\rho\)` = .954, _n_ = 36), the poorest correspondence was for Anatomy (S040, Spearman `\(\rho\)` = .505, _n_ = 21). 
+
+--
+
+* The vast majority of subject rankings were stable (Spearman `\(\rho\)` `\(\geq\)` .667, for 61 out of 66 subjects), with most showing strong stability (Spearman `\(\rho\)` `\(\geq\)` .8, for 41 out of 66 subjects).
+
+---
+## Results Guardian 2023-2024 vs. RRA method
+
+*  Just three universities out of 121 ranked in total, i.e. Leeds, Birmingham, Hull, experienced a significant drop based on the RRA method.
+
+--
+
+* Conclusion is the same regardless of the choice for the Benjamini &amp; Yekutieli adjustment (Benjamini &amp; Yekutieli: _p_ &lt; .00001, _p_ = .0030, _p_ = .0146) or Bonferroni adjustment (Bonferroni: _p_ &lt; .00001, _p_ = .0011, _p_ = .0081).
+
+--
+
+*  No significant climbers based on the RRA method when applying an adjustment based  Benjamini &amp; Yekutieli (2001), at _p_ = .05. 
+
+--
+
+* One significant climber, The University of Brighton, based on the RRA method following Bonferroni correction (_p_ = .045). The second ranked climber, the University of Portsmouth: no longer a significant climber after Bonferroni correction (_p_ = .069).
+
+--
+
+* Little correspondence: _Drops_: Spearman `\(\rho\)` = .187. _Climbs_: Spearman `\(\rho\)` = .259. 
+
+???
+(Brighton 2023: 92, Brighton 2024: 70; Portsmouth 2023: 67, Portsmouth 2024: 33).
+
+---
+## Results: Guardian 2019 - 2024 change descriptives
+
+* Correspondence between an institution's rank for 2019 and 2024 was moderate (Spearman `\(\rho\)` = .762). 
+
+--
+
+* Six universities did not move ranks between 2019 and 2024 (5.08%). 
+
+--
+
+* Median movement on the institution list was 14.5 ranks and this is significantly different from 0 (Wilcoxon signed rank test = 6328, _p_ &lt; .00001). 
+
+--
+
+* The biggest climber, Ulster, was climbing 65 ranks, from 93 to 28. 
+
+--
+
+* Largest drop was 63 places, and this was Brunel moving from rank 58 to rank 121.
+
+---
+## Results: Guardian 2019 - 2024 change descriptives II
+
+* 49 out of 66 subjects can be matched between 2019 and 2024.
+
+--
+
+* For 2,651 items ranked we were able to calculate a rank difference between 2019 and 2024. 
+
+--
+
+* Weak correspondence between 2019 and 2024 ranks (Spearman `\(\rho\)` = .616). 
+
+--
+
+* Median movement across all items in ranks was twelve ranks (min = 0, max = 97). 
+
+--
+
+* All subjects showed significant changes in ranks between 2019 and 2024 (all Wilcoxon signed rank tests of median movement against 0, _p_ &lt; .05). 
+
+--
+
+* 84 out of 2,651 items did not move rank (3.17%). 
+
+--
+
+* Largest individual climber was the University of Wolverhampton in Business and Management studies (S240) from rank 122 to 28. 
+
+--
+
+* Largest individual drop was by Falmouth university also in Business and Management studies (S240) from rank 14 to rank 111. 
+
+---
+## Results: Guardian 2019 - 2024 change descriptives III
+
+* Veterinary Sciences (S030) had the lowest median movement (Median = .5 rank) and Forensic Science (S120) had the greatest median movement (Median = 22.5 ranks).  
+--
+
+* The greatest correspondence between 2023 and 2024 ranks was found in Theology and religious studies (S480, Spearman `\(\rho\)` = .811), the poorest correspondence was for Pharmacy (S090, Spearman `\(\rho\)` = .057). 
+
+--
+
+* Vast majority of subject rankings were not stable (Spearman `\(\rho\)` `\(\geq\)` .667, for 8 out of 49 subjects) - one subject showing strong stability: Theology and religious studies.
+
+&lt;img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeHozaTl5cHh5end3MGNrejl0YTkwcTN5aGZtbnNpajlqZWd5NWZ4bCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/DXC8bM9ZM4Wn3PDvK7/giphy.gif" width="300px" style="display: block; margin: auto;" /&gt;
+
+---
+## Results Guardian 2019 - 2024 vs RRA method: drops
+
+&lt;img src="Table_GUG_RRA_2019_2024_drops.png" width="500px" style="display: block; margin: auto;" /&gt;
+
+???
+Seven institutions
+
+---
+## Results Guardian 2019 - 2024 vs RRA method: climbs
+
+*  Only one institution, the University of Edinburgh, was a significant climber (Benjamini &amp; Yekutieli: _p_ &lt; .00001  and Bonferroni: _p_ &lt; .00001). 
+
+--
+
+* Other climbers were Cardiff, Ulster and Glasgow but not significantly so (all Benjamini &amp; Yekutieli: _p_ &gt; .1, respective: Bonferroni _p_ = .075, _p_ = .094 and _p_ = .097).
+
+--
+
+* Little correspondence between the ranking for ranks dropped between 2019 and 2024 based on the Guardian Institution list and the RRA method (Spearman `\(\rho\)` = .284). Also little correspondence between the ranks gained between 2019 and 2024 based on the Guardian Institution list and the RRA method (Spearman `\(\rho\)` = .248).
+
+&lt;img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeGFmaGhnZTh0OGk4NjFmY2Q3YWZ5ejJ3dnRsZjEyeXl3eXg0YXpqNSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3oEduNmaVyg4RoqL4Y/giphy-downsized-large.gif" width="200px" style="display: block; margin: auto;" /&gt;
+
+---
+## Results: CUG 2024 descriptives
+
+* There are 130 institutions ranked in the institution list for 2024, but 151 unique institutions appear in the list of 74 subjects.
+
+--
+
+* As with the Guardian University Guide 2024, Business and Management Studies has the most institutions ranked (_n_ = 121). The smallest list was for Celtic studies where only five institutions were ranked. 
+
+--
+
+* The Complete University Guide institution list allows for ties in rankings (for 2024: 14 ties; none in top 60). However, in their subject ranking list, only one subject showed ties (Drama, Dance, and Cinematics), and just one tie.  
+
+&lt;img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbXQycDE3dDRjM3h3d3c1Mno0bHFseXczc3pqamJrZjdnb3FoeGgzdiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/x77mujmMAGfMQ/giphy.gif" width="400px" style="display: block; margin: auto;" /&gt;
+
+
+---
+## Results: CUG 2024
+
+&lt;img src="Table_CUG_RRA_2024.png" width="400px" style="display: block; margin: auto;" /&gt;
+
+---
+## Results: CUG 2024 
+
+* The correspondence between the two ranking lists was good, both when including any institution ranked in the subject list (Spearman `\(\rho\)` = .824) and when restricting to universities which are listed in the complete university guide institution list (Spearman `\(\rho\)` = .825).
+
+--
+
+* Two Russell Group universities were not included in the list. (York / Queen Mary University London)
+
+---
+## Results: CUG 2024 discrepancies
+
+&lt;img src="Table_CUG_ranking_discrepancies.png" width="550px" style="display: block; margin: auto;" /&gt;
+
+---
+## Results: CUG vs. RRA Russell Group
+
+&lt;img src="Figure_2_CUG_RRA.png" width="450px" style="display: block; margin: auto;" /&gt;
+
+???
+Correspondence between the 24 Russell Group universities’ rankings between the two methods is relatively poor (Spearman `\(\rho\)` = .394).
+
+---
+## Results: CUG 2023-2024 changes: Descriptives
+
+* Both the 2023 and 2024 list contained 130 institutions. However, Ravensbourne University London was included in the 2023 list but not in the 2024 list. Conversely, Leeds Arts University was included in 2024 but not 2023. 
+
+--
+
+* As with the Guardian's institution list, the correspondence between an institution's rank for 2023 and 2024 was strong (Spearman `\(\rho\)` = .966). 
+
+--
+
+* Ten universities did not move ranks between 2023 and 2024 (7.75%). 
+
+--
+
+* The median movement on the institution list was four ranks and this is significantly different from 0 (Wilcoxon signed rank test = 7140, _p_ &lt; .00001). 
+
+--
+
+* The biggest climber was Leeds Beckett University climbing 40 ranks, respectively from 106 to 66. The largest drop, 31 places, was observed for the University of Bradford, moving from rank 74 in 2023 down to rank 115 in 2024.
+
+---
+## Results: CUG 2023-2024 changes: Descriptives II
+
+* For 3,718 items ranked we were able to calculate a rank difference between 2023 and 2024. 
+
+--
+
+* Strong correspondence between 2023 and 2024 ranks (Spearman `\(\rho\)` = .921).
+
+--
+
+* Median movement across all items in ranks was five ranks (min = 0, max = 63). 
+
+--
+
+* All but one subject, African and Middle Eastern Studies, showed significant changes in ranks between 2023 and 2024 (all Wilcoxon signed rank tests of median movement against 0, _p_ &lt; .05). 
+
+--
+
+* 302 out of 3,556 items did not move rank (8.12%). 
+
+---
+## Results: CUG 2023-2024 changes: Descriptives III
+
+
+* Largest individual climber was the University of Winchester in Drama, Dance, and Cinematics from rank 96 to 33. 
+
+--
+
+* Two institutions showed the largest drops in a subject: the University of Sunderland in Biological Sciences from rank 35 in 2023 to rank 94 in 2024 and Buckinghamshire New University in Sport science with a drop from rank 20 to rank 79. 
+
+--
+
+* African and Middle Eastern Studies had the lowest median movement of all subjects (Median = 0 ranks, _n_ = 9). 
+
+--
+
+* Two subjects, English and Drama, Dance, and Cinematics, had the greatest median movement (Median = 11 ranks, respective _n_ = 97 and _n_ = 96). 
+
+--
+
+* Perfect correspondence between 2023 and 2024 ranks was found in Celtic Studies (Spearman `\(\rho\)` = 1, _n_ = 5), the poorest correspondence was for American Studies (Spearman `\(\rho\)` = .476, _n_ = 8). 
+
+--
+
+* The vast majority of subject rankings were stable (Spearman `\(\rho\)` `\(\geq\)` .667, for 68 out of 74 subjects), with most showing strong stability (Spearman `\(\rho\)` `\(\geq\)` .8, for 54 out of 74 subjects).
+
+
+---
+## Results: CUG 2019-2024 changes
+
+* Not completed yet / Subject labels changed / etc. --&gt; AAARGH
+
+&lt;img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbml4eGdsbHlmOGR2YzZxa204MDRvNDJzZHYxYjFkcm9qbGZ1aW00eiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/SY2j8eBZjSPqv7Ggxt/giphy.gif" width="500px" style="display: block; margin: auto;" /&gt;
+
+
+---
+## Summary
+
+* No surprises perhaps: rankings do not correspond between methods...
+
+--
+
+* Example 24 Russell Group rankings correlate at .574 (GUG) and .394 (CUG)
+
+--
+
+* Robust changes across subjects are relatively rare?
+
+
+&lt;img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeXM3eXg2dXg4a294cGU3aDdhYzNkb3AzamJmOW01M2d2eXR1aHJmbyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/flLxd9ynwrfRIuUsT2/giphy.gif" width="300px" style="display: block; margin: auto;" /&gt;
+
+---
+## Moving forward... 
+
+* More awareness of limitations of rankings?
+
+&lt;img src="https://media.giphy.com/media/3ohc0PrdNeYvAzGa76/giphy.gif" width="450px" style="display: block; margin: auto;" /&gt;
+
+---
+## Limitations
+
+* Largely descriptive... .
+
+--
+
+* More than one way to solve this problem... . (Some use ordinal distance)
+
+--
+
+* Specialists might do less well under 'RRA'. 
+
+--
+
+* Weighing of subjects? --&gt; opens door further for bias?
+
+
+&lt;img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExYnBvNjYxNXJ1ZWRtbm10MHc3ZDBhd3c0ODVpZGtvZmpnOGx6cWJocCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/yyhJaoPDhCbBu/giphy.gif" width="300px" style="display: block; margin: auto;" /&gt;
+
+???
+How to decide who is a specialist.
+
+---
+## Further research.
+
+* Further aggregation, and across domains? 
+
+--
+
+* Repeat the exercise for THE REF rankings?
+
+--
+
+* Project on NBA draft picks... .
+
+&lt;img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOGk0bWx5YzFlaHB3ajRmbnQzNGJvb3p5aHRlZ2dqYm5hd3Jyb3ZobiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l3vRaD8Ya4RJFwn60/giphy.gif" width="350px" style="display: block; margin: auto;" /&gt;
+
+---
+## Any Questions?
+
+[http://tvpollet.github.io](http://tvpollet.github.io)
+
+Twitter: @tvpollet
+
+&lt;img src="https://media.giphy.com/media/3ohzdRoOp1FUYbtGDu/giphy.gif" width="600px" style="display: block; margin: auto;" /&gt;
+
+---
+## Acknowledgments
+
+* I am greatly indebted to my collaborators (Or I will be ;)). (Any mistakes are my own!).
+
+* You for listening!
+
+&lt;img src="https://media.giphy.com/media/10avZ0rqdGFyfu/giphy.gif" width="500px" style="display: block; margin: auto;" /&gt;
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
